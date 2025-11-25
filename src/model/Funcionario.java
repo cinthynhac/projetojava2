@@ -1,4 +1,5 @@
 package model;
+
 import enums.Cargo;
 
 public class Funcionario{
@@ -10,6 +11,8 @@ public class Funcionario{
     private String dataNascimento;
     private int idFuncionario;
     private int idLoja;
+    private Enum<Cargo> Cargo;
+
 
 
 }

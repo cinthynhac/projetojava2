@@ -1,4 +1,5 @@
 import model.Produto;
+import service.ClienteService;
 import service.ProdutoService;
 
 import java.util.Scanner;
@@ -7,8 +8,26 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         ProdutoService produtoService = new ProdutoService();
+        ClienteService clienteService = new ClienteService();
 
+        int menu0;
         int opcao;
+
+        do {
+            System.out.println("Bem vindo ao seu sistema integrado de Lojas. Escolha uma das opções abaixo: ");
+            System.out.println("1.Criar loja.");
+            System.out.println("2. Acessar loja.");
+            System.out.println("3. Listar as suas lojas.");
+            System.out.println("4. Excluir Loja.");
+            System.out.println("5. Sair.");
+            menu0 = sc.nextInt();
+            sc.nextLine();
+
+            switch (menu0) {
+                case 1:
+                    Loja loja 
+            }
+        }
 
         do{
             System.out.println("Bem-vindo ao seu sistema integrado de lojas. Escolha uma das opções abaixo: ");
@@ -99,4 +118,5 @@ public class Main {
 
 
     }
+
 }

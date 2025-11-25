@@ -7,6 +7,7 @@ public class ProdutoService {
     private ArrayList<Produto> produtos= new ArrayList<>();
 
     //cadastrar produto
+
     public void cadastrarProduto(Produto produto){
         produtos.add(produto);
         }
