@@ -67,6 +67,8 @@ public class ProdutoService {
         return false;
     }
 
+    //alterarproduto
+
     //excluir produto
 
     public boolean excluirProduto(int idLoja, int idProduto) {
