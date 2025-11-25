@@ -1,4 +1,6 @@
+import model.Loja;
 import model.Produto;
+import org.w3c.dom.ls.LSOutput;
 import service.ClienteService;
 import service.ProdutoService;
 
@@ -25,9 +27,38 @@ public class Main {
 
             switch (menu0) {
                 case 1:
-                    Loja loja 
+                    Loja loja = new Loja();
+
+                    System.out.println("Digite a razão Social da sua loja: ");
+                    loja.setRazaoSocial(sc.nextLine());
+
+                    System.out.println("Digite Nome fantasia da sua loja: ");
+                    loja.setNomeFantasia(sc.nextLine());
+
+                    System.out.println("Digite o CNPJ da sua loja: ");
+                    loja.setCnpj(sc.nextLine());
+
+                    System.out.println("Digite o endereço da sua loja: ");
+                    loja.setEndereco(sc.nextLine());
+
+                    System.out.println("Digite o telefone da sua Loja: ");
+                    loja.setTelefone(sc.nextLine());
+
+                    System.out.println("Digite o email da sua loja: ");
+                    loja.setEmail(sc.nextLine());
+
+                    System.out.println("Digite o Id da sua Loja: ");
+                    loja.setIdLoja(Integer.parseInt(sc.nextLine()));
+
+                    lojaService.
+
+
+
             }
-        }
+        } while (menu0 !=0);
+
+
+
 
         do{
             System.out.println("Bem-vindo ao seu sistema integrado de lojas. Escolha uma das opções abaixo: ");

@@ -14,14 +14,11 @@ public abstract class Loja {
 
     //Construtores
 
-    public Loja(String razaoSocial,
-                String nomeFantasia,
-                String cnpj,
-                String endereco,
-                String telefone,
-                String email,
-                int idLoja) {
+    public Loja (){
 
+    }
+    public Loja(int getLojas, String razaoSocial, String nomeFantasia, String cnpj, String endereco, String telefone, String email, int idLoja) {
+        this.getLojas = getLojas;
         this.razaoSocial = razaoSocial;
         this.nomeFantasia = nomeFantasia;
         this.cnpj = cnpj;
