@@ -1,18 +1,9 @@
 package service;
-
 import model.Loja;
-
 import java.util.ArrayList;
 
 public class LojaService {
-
     private ArrayList<Loja> lojas = new ArrayList<>();
-
-    //Listar
-
-    public ArrayList<Loja> getLojas() {
-        return lojas;
-    }
 
     //Cadastrar
 
@@ -20,7 +11,24 @@ public class LojaService {
         lojas.add(loja);
     }
 
-    //ALterar
+    //Listar
+
+    public ArrayList<Loja> getLojas() {
+        return lojas;
+    }
+
+
+    //buscar loja por id
+    public Loja buscarLojaPorId(int idLoja) {
+        for (Loja loja : lojas) {
+            if (loja.getIdLoja() == idLoja) {
+                return loja;
+            }
+        }
+        return null;
+    }
+
+    //Alterar
 
 
 

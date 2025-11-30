@@ -1,9 +1,10 @@
 package model;
-
 import enums.Cargo;
-    //Atributos
 
 public class Funcionario{
+
+    //Atributos
+
     private String nome;
     private String cpf;
     private String endereco;
@@ -17,6 +18,9 @@ public class Funcionario{
 
     //Construtores
 
+    public Funcionario (){
+
+    }
     public Funcionario(String nome,
                        String cpf,
                        String endereco,
