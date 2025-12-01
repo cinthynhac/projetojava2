@@ -28,11 +28,6 @@ public class LojaService {
         return null;
     }
 
-    //Alterar
-
-
-
-
     //Excluir
 
     public boolean excluirLoja(int idLoja) {return lojas.removeIf(loja -> loja.getIdLoja() == idLoja);
