@@ -33,6 +33,15 @@ public class ClienteService {
         }
         return null;
     }
+    //buscar cliente por CPF
+    public Cliente buscarClientePorCpf(int idLoja,String cpf){
+        for (Cliente c : clientes) {
+            if (c.getCpf().equals(cpf)) {
+                return c;
+            }
+        }
+        return null;
+    }
 
     //excluir cliente
     public boolean removerClientePorLoja(int idLoja,int idCliente){
@@ -46,28 +55,6 @@ public class ClienteService {
             return false;
         }
 
-    //alterar dados de cliente
-
-    public boolean alterarCliente(int idLoja, int idCliente, String novoNome, String novoCpf,
-                                  String novoEndereco, String novoTelefone, String novoEmail,
-                                  String novaDataNascimento) {
-
-        Cliente cliente = buscarClientePorLoja(idLoja, idCliente);
-
-        if (cliente != null) {
-            // Atualiza os dados
-            cliente.setNome(novoNome);
-            cliente.setCpf(novoCpf);
-            cliente.setEndereco(novoEndereco);
-            cliente.setTelefone(novoTelefone);
-            cliente.setEmail(novoEmail);
-            cliente.setDataNascimento(novaDataNascimento);
-
-            return true; // sucesso
-        }
-
-        return false; // cliente não encontrado
-    }
 
     }
 

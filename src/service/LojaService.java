@@ -35,8 +35,7 @@ public class LojaService {
 
     //Excluir
 
-    public boolean excluirLoja(int idLoja) {
-        return lojas.removeIf(loja -> loja.getIdLoja() == idLoja);
+    public boolean excluirLoja(int idLoja) {return lojas.removeIf(loja -> loja.getIdLoja() == idLoja);
     }
 }
 

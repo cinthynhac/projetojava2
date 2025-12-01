@@ -1,11 +1,8 @@
-import model.Funcionario;
-import model.Loja;
-import model.Produto;
-import service.ClienteService;
-import service.FuncionarioService;
-import service.LojaService;
-import service.ProdutoService;
+import model.*;
+import service.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,6 +13,8 @@ public class Main {
         ClienteService clienteService = new ClienteService();
         LojaService lojaService = new LojaService();
         FuncionarioService funcionarioService = new FuncionarioService();
+        VendasService vendasService = new VendasService();
+
 
         int menu0;
 
@@ -30,8 +29,9 @@ public class Main {
             sc.nextLine();
 
             switch (menu0) {
-                case 1:
-                    Loja loja = new Loja() {};
+                case 1: //case1 menu0;
+                    Loja loja = new Loja() {
+                    };
 
                     System.out.println("Digite a razão Social da sua loja: ");
                     loja.setRazaoSocial(sc.nextLine());
@@ -60,7 +60,7 @@ public class Main {
 
                     break;
 
-                case 2 :
+                case 2: //case2 do menu0
                     System.out.println("Digite o ID da loja que deseja acessar: ");
                     int idLojaServicos = Integer.parseInt(sc.nextLine());
 
@@ -77,7 +77,7 @@ public class Main {
                         System.out.println("1. Vendas.");
                         System.out.println("2. Produtos.");
                         System.out.println("3. Funcionário.");
-                        System.out.println("4. Marketing.");
+                        System.out.println("4. Clientes");
                         System.out.println("5. Relatórios.");
                         System.out.println("0. Voltar ao Menu Principal.");
                         opcaoservico = sc.nextInt();
@@ -85,24 +85,232 @@ public class Main {
 
                         switch (opcaoservico) {
 
-                            case 1:
+                            case 1: //case1 do menuSERVIÇOS;
+                                int vendasopcao;
 
+                                do {
+                                    System.out.println("\n===== OPÇÃO VENDAS " + lojaSelecionada.getNomeFantasia() + "=====");
+                                    System.out.println("1. Registrar Venda.");
+                                    System.out.println("2. Listar Vendas da Loja " + lojaSelecionada.getNomeFantasia() + ".");
+                                    System.out.println("3. Listar Vendas do Cliente.");
+                                    System.out.println("4. Buscar vendas por ID da Venda.");
+                                    System.out.println("5. Buscar vendas por Cliente.");
+                                    System.out.println("6. Exlcuir Venda.");
+                                    System.out.println("0. Voltar ao Menu de Serviços da Loja");
+                                    vendasopcao = sc.nextInt();
+                                    sc.nextLine();
+
+                                    switch (vendasopcao) {
+                                        case 1://case1 do menu VENDAS
+                                            Vendas vendas = new Vendas();
+
+                                            System.out.println("Parabéns pela sua venda!");
+                                            vendas.setIdLoja(lojaSelecionada.getIdLoja());
+
+                                            System.out.println("Digite o CPF do Cliente: ");
+                                            String cpf = sc.nextLine();
+                                            Cliente clienteSelecionado = clienteService.buscarClientePorCpf(lojaSelecionada.getIdLoja(), cpf);
+
+                                            if (clienteSelecionado == null) {
+                                                System.out.println("Cliente não encontrado! Cadastre o cliente antes de registrar a venda.");
+                                                break; // volta ao menu de vendas
+                                            }
+
+                                            vendas.setCliente(clienteSelecionado);
+
+                                            System.out.println("Digite o CPF do Funcionário responsável: ");
+                                            String cpfFunc = sc.nextLine();
+                                            Funcionario funcionarioSelecionado = funcionarioService.buscarFuncionarioPorCPF(lojaSelecionada.getIdLoja(), cpfFunc);
+
+                                            if (funcionarioSelecionado == null) {
+                                                System.out.println("Funcionário não encontrado!");
+                                                break;
+                                            }
+
+                                            vendas.setFuncionario(funcionarioSelecionado);
+
+                                            // Criar lista de itens da venda
+                                            List<ItemVenda> itens = new ArrayList<>();
+                                            float valorTotal = 0;
+
+                                            String continuar;
+                                            do {
+                                                System.out.println("Digite o ID do Produto:");
+                                                int idProduto = sc.nextInt();
+                                                sc.nextLine();
+
+                                                Produto produtoSelecionado = produtoService.buscarProdutoPorLoja(lojaSelecionada.getIdLoja(), idProduto);
+
+                                                if (produtoSelecionado == null) {
+                                                    System.out.println("Produto não encontrado!");
+                                                    break;
+                                                }
+
+                                                System.out.println("Digite a quantidade:");
+                                                int quantidade = sc.nextInt();
+                                                sc.nextLine();
+
+                                                float subtotal = produtoSelecionado.getPreco() * quantidade;
+
+                                                // Criando item de venda
+                                                ItemVenda item = new ItemVenda(produtoSelecionado, quantidade, subtotal);
+                                                itens.add(item);
+
+                                                valorTotal += subtotal;
+
+                                                System.out.println("Adicionar mais um produto? (S/N)");
+                                                continuar = sc.nextLine();
+
+                                            } while (continuar.equalsIgnoreCase("S"));
+
+                                            vendas.setItens(itens);
+                                            vendas.setValorTotal(valorTotal);
+                                            vendas.setDataVenda(LocalDate.now());
+
+                                            // Registrar venda
+                                            vendasService.cadastrarVenda(vendas);
+
+                                            System.out.println("Venda registrada com sucesso!");
+                                            System.out.println("Valor total da venda: R$ " + valorTotal);
+
+                                            break;
+
+                                        case 2:
+
+                                            System.out.println("\n===== LISTA DE VENDAS DA LOJA =====");
+
+                                            ArrayList<Vendas> vendasDaLoja = vendasService.listarVendasPorLoja(lojaSelecionada.getIdLoja());
+
+                                            if (vendasDaLoja.isEmpty()) {
+                                                System.out.println("Nenhuma venda registrada para esta loja.");
+                                            } else {
+                                                for (Vendas v : vendasDaLoja) {
+                                                    System.out.println("ID Venda: " + v.getIdVenda());
+                                                    System.out.println("Cliente: " + v.getCliente().getNome());
+                                                    System.out.println("Funcionário: " + v.getFuncionario().getNome());
+                                                    System.out.println("Valor Total: R$ " + v.getValorTotal());
+                                                    System.out.println("Data: " + v.getDataVenda());
+                                                    System.out.println("--------------------------------------");
+                                                }
+                                            }
+                                            break;
+
+                                        case 3:
+                                            System.out.println("\nDigite o ID do cliente: ");
+                                            int idClienteListar = Integer.parseInt(sc.nextLine());
+
+                                            ArrayList<Vendas> vendasDoCliente = vendasService.listarVendasPorCliente(
+                                                    lojaSelecionada.getIdLoja(), idClienteListar);
+
+                                            if (vendasDoCliente.isEmpty()) {
+                                                System.out.println("Nenhuma venda encontrada para este cliente.");
+                                            } else {
+                                                System.out.println("\n===== VENDAS DO CLIENTE =====");
+                                                for (Vendas v : vendasDoCliente) {
+                                                    System.out.println("ID Venda: " + v.getIdVenda());
+                                                    System.out.println("Valor Total: R$ " + v.getValorTotal());
+                                                    System.out.println("Data: " + v.getDataVenda());
+                                                    System.out.println("--------------------------------------");
+                                                }
+                                            }
+                                            break;
+
+                                        case 4:
+                                            System.out.println("Digite o ID da venda para buscar: ");
+                                            int idVendaBusca = Integer.parseInt(sc.nextLine());
+
+                                            Vendas vendaEncontrada = vendasService.buscarVendaPorLoja(
+                                                    lojaSelecionada.getIdLoja(), idVendaBusca);
+
+                                            if (vendaEncontrada == null) {
+                                                System.out.println("Venda não encontrada!");
+                                            } else {
+                                                System.out.println("\n===== DETALHES DA VENDA =====");
+                                                System.out.println("ID Venda: " + vendaEncontrada.getIdVenda());
+                                                System.out.println("Cliente: " + vendaEncontrada.getCliente().getNome());
+                                                System.out.println("Funcionário: " + vendaEncontrada.getFuncionario().getNome());
+                                                System.out.println("Valor Total: R$ " + vendaEncontrada.getValorTotal());
+                                                System.out.println("Data: " + vendaEncontrada.getDataVenda());
+
+                                                System.out.println("--- Itens da Venda ---");
+                                                for (ItemVenda item : vendaEncontrada.getItens()) {
+                                                    System.out.println("Produto: " + item.getProduto().getNomedoproduto());
+                                                    System.out.println("Quantidade: " + item.getQuantidade());
+                                                    System.out.println("Subtotal: R$ " + item.getSubtotal());
+                                                    System.out.println("-----------------------");
+                                                }
+                                            }
+                                            break;
+
+                                        case 5:
+                                            System.out.println("Digite o ID do Cliente:");
+                                            int idCliBusca = Integer.parseInt(sc.nextLine());
+
+                                            System.out.println("Digite o ID da Venda:");
+                                            int idVendaCli = Integer.parseInt(sc.nextLine());
+
+                                            Vendas vendaCliente = vendasService.buscarVendaPorCliente(
+                                                    lojaSelecionada.getIdLoja(), idCliBusca, idVendaCli);
+
+                                            if (vendaCliente == null) {
+                                                System.out.println("Venda não encontrada para este cliente!");
+                                            } else {
+                                                System.out.println("\n===== DETALHES DA VENDA (Cliente) =====");
+                                                System.out.println("ID Venda: " + vendaCliente.getIdVenda());
+                                                System.out.println("Cliente: " + vendaCliente.getCliente().getNome());
+                                                System.out.println("Valor Total: R$ " + vendaCliente.getValorTotal());
+                                                System.out.println("Data: " + vendaCliente.getDataVenda());
+
+                                                System.out.println("--- Itens da Venda ---");
+                                                for (ItemVenda item : vendaCliente.getItens()) {
+                                                    System.out.println("Produto: " + item.getProduto().getNomedoproduto());
+                                                    System.out.println("Quantidade: " + item.getQuantidade());
+                                                    System.out.println("Subtotal: R$ " + item.getSubtotal());
+                                                    System.out.println("-----------------------");
+                                                }
+                                            }
+                                            break;
+
+                                        case 6:
+                                            System.out.println("Digite o ID da venda para excluir:");
+                                            int idVendaExcluir = Integer.parseInt(sc.nextLine());
+
+                                            boolean removida = vendasService.excluirVenda(lojaSelecionada.getIdLoja(), idVendaExcluir);
+
+                                            if (removida) {
+                                                System.out.println("Venda excluída com sucesso!");
+                                            }
+                                            break;
+
+                                        case 0:
+
+                                            System.out.println("Saindo...");
+                                            break;
+
+                                        default:
+                                            System.out.println("Opção inválida.");
+                                            break;
+
+                                    }
+
+                                } while (vendasopcao != 0);
                                 break;
 
                             case 2:
-                                int opcao;
+                                int opcaoprodutos;
 
-                                do{
-                                    System.out.println("\n======= OPÇÃO PRODUTOS " + lojaSelecionada.getNomeFantasia()+ "=======");
+                                do {
+                                    System.out.println("\n======= OPÇÃO PRODUTOS " + lojaSelecionada.getNomeFantasia() + "=======");
                                     System.out.println("1. Cadastrar novo produto: ");
-                                    System.out.println("2. Listar produtos: ");
-                                    System.out.println("3. Buscar produtos: ");
+                                    System.out.println("2. Listar produtos. ");
+                                    System.out.println("3. Buscar produtos. ");
+                                    System.out.println("4. Excluir produto.");
                                     System.out.println("0. Voltar ao Menu de Serviços da Loja.");
-                                    opcao = sc.nextInt();
+                                    opcaoprodutos = sc.nextInt();
                                     sc.nextLine();
 
-                                    switch (opcao) {
-                                        case 1:
+                                    switch (opcaoprodutos) {
+                                        case 1://cadastrar novo produto
                                             Produto produto = new Produto();
                                             System.out.println("Digite o nome do produto: ");
                                             produto.setNomedoproduto(sc.nextLine());
@@ -127,7 +335,7 @@ public class Main {
 
                                             break;
 
-                                        case 2:
+                                        case 2: // listar produto
 
                                             System.out.println("\nProdutos da loja " + lojaSelecionada.getNomeFantasia() + ":");
 
@@ -148,7 +356,7 @@ public class Main {
                                             }
                                             break;
 
-                                        case 3:
+                                        case 3: //buscar produtos
 
                                             System.out.println("Digite o ID do produto: ");
                                             int idProdutoBusca = Integer.parseInt(sc.nextLine());
@@ -165,7 +373,43 @@ public class Main {
                                             }
                                             break;
 
-                                        case 0:
+                                        case 4: //excluir produto
+                                            System.out.println("\n===== EXCLUSÃO DE PRODUTO =====");
+
+                                            // Primeiro mostrar os produtos cadastrados na loja
+                                            List<Produto> produtosParaExcluir = produtoService.listarProdutosPorLoja(lojaSelecionada.getIdLoja());
+
+                                            if (produtosParaExcluir.isEmpty()) {
+                                                System.out.println("Não há Produtos cadastrados na loja " + lojaSelecionada.getNomeFantasia());
+                                            } else {
+                                                System.out.println("Produtos disponíveis para excluir: ");
+
+                                                for (Produto produtos : produtosParaExcluir) {
+
+                                                    System.out.println(
+                                                            "ID Produto: " + produtos.getIdProduto() +
+                                                                    " | Nome: " + produtos.getNomedoproduto() +
+                                                                    " | Preço: " + produtos.getPreco() +
+                                                                    " | Estoque: " + produtos.getQuantidadeEstoque()
+                                                    );
+                                                }
+
+                                                System.out.println("\nDigite o ID do Produto que deseja excluir: ");
+                                                int idExcluir = Integer.parseInt(sc.nextLine());
+
+                                                boolean excluiu = produtoService.excluirProduto(lojaSelecionada.getIdLoja(), idExcluir);
+
+                                                if (excluiu) {
+                                                    System.out.println("Produto excluída com sucesso!");
+                                                } else {
+                                                    System.out.println("Nenhuma produto encontrado com esse ID.");
+                                                }
+                                            }
+
+                                            System.out.println(); // apenas espaçamento
+                                            break;
+
+                                        case 0: //voltar para ao menu serviço
                                             System.out.println("Saindo...");
                                             break;
 
@@ -174,20 +418,16 @@ public class Main {
                                             break;
 
                                     }
-                                } while (opcao!= 0);
+                                } while (opcaoprodutos != 0);
 
                                 break;
 
                             case 3:
-
                                 int opcaofuncionario;
-
-                                do{
-                                    System.out.println("\n======= OPÇÃO FUNCIONÁRIO " + lojaSelecionada.getNomeFantasia()+ "=======");
+                                do {
+                                    System.out.println("\n======= OPÇÃO FUNCIONÁRIO " + lojaSelecionada.getNomeFantasia() + "=======");
                                     System.out.println("1. Cadastrar Novo Funcionário: ");
-                                    System.out.println("2. Listar Funcionários: ");
-                                    System.out.println("3. Alterar Funcionário");
-                                    System.out.println("4. Excluir Funcionário: ");
+                                    System.out.println("2. Excluir Funcionário: ");
                                     System.out.println("0. Voltar ao Menu de Serviços da Loja.");
                                     opcaofuncionario = sc.nextInt();
                                     sc.nextLine();
@@ -226,39 +466,16 @@ public class Main {
 
                                         case 2:
 
-                                            System.out.println("\nProdutos da loja " + lojaSelecionada.getNomeFantasia() + ":");
+                                            System.out.println("Digite o ID do funcionário que deseja excluir:");
+                                            int idExcluir = Integer.parseInt(sc.nextLine());
 
-                                            List<Produto> lista = produtoService.listarProdutosPorLoja(lojaSelecionada.getIdLoja());
-
-                                            if (lista.isEmpty()) {
-                                                System.out.println("Nenhum produto encontrado para essa loja.");
-                                            } else {
-                                                for (Produto produtos : lista) {
-                                                    System.out.println(
-                                                            "Nome: " + produtos.getNomedoproduto() +
-                                                                    " | ID Produto: " + produtos.getIdProduto() +
-                                                                    " | Preço: " + produtos.getPreco() +
-                                                                    " | Categoria: " + produtos.getCategoria() +
-                                                                    " | Estoque: " + produtos.getQuantidadeEstoque()
-                                                    );
-                                                }
-                                            }
-                                            break;
-
-                                        case 3:
-
-                                            System.out.println("Digite o ID do produto: ");
-                                            int idProdutoBusca = Integer.parseInt(sc.nextLine());
-
-                                            Produto encontradoLoja = produtoService.buscarProdutoPorLoja(
+                                            boolean excluiu = funcionarioService.excluirfuncionarioPorLoja(
                                                     lojaSelecionada.getIdLoja(),
-                                                    idProdutoBusca
+                                                    idExcluir
                                             );
 
-                                            if (encontradoLoja != null) {
-                                                System.out.println("Produto encontrado: " + encontradoLoja.getNomedoproduto());
-                                            } else {
-                                                System.out.println("Produto não encontrado nessa loja.");
+                                            if (excluiu) {
+                                                System.out.println("Funcionário excluído com sucesso!");
                                             }
                                             break;
 
@@ -271,30 +488,35 @@ public class Main {
                                             break;
 
                                     }
-                                } while (opcaofuncionario!= 0);
+                                } while (opcaofuncionario != 0);
 
                                 break;
 
 
+                            case 4://cadastrar novo cliente
+                                System.out.println();
+                                break;
 
-                            case 4:
 
-
-
-                            case 5:
-
+                            case 5://emitir relatórios
+                                break;
 
 
                             case 0:
 
+                                System.out.println("Saindo...");
+                                break;
 
+                            default:
+                                System.out.println("Opção inválida.");
+                                break;
 
                         }
 
                     } while (opcaoservico != 0);
                     break;
 
-                case 3 :
+                case 3:
                     System.out.println("\n===== LISTA DE LOJAS CADASTRADAS =====");
 
                     List<Loja> listaLojas = lojaService.getLojas();
@@ -325,7 +547,6 @@ public class Main {
                     if (lojasParaExcluir.isEmpty()) {
                         System.out.println("Não há lojas cadastradas para excluir.");
                     } else {
-
                         for (Loja l : lojasParaExcluir) {
                             System.out.println(
                                     "ID Loja: " + l.getIdLoja() +
@@ -335,7 +556,6 @@ public class Main {
 
                         System.out.println("\nDigite o ID da loja que deseja excluir: ");
                         int idExcluir = Integer.parseInt(sc.nextLine());
-
                         boolean excluiu = lojaService.excluirLoja(idExcluir);
 
                         if (excluiu) {
@@ -354,9 +574,7 @@ public class Main {
 
 
             }
-        } while (menu0 !=0);
 
-
+        } while (menu0 != 0);
     }
-
 }
