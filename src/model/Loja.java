@@ -2,7 +2,7 @@ package model;
 
     //Atributos
 
-public abstract class Loja {
+public class Loja {
     public int getLojas;
     private String razaoSocial;
     private String nomeFantasia;

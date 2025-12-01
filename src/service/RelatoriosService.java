@@ -4,21 +4,18 @@ import model.Vendas;
 import java.util.ArrayList;
 
 public class RelatoriosService {
-    public class RelatorioService {
 
         private VendasService vendasService;
         private ProdutoService produtoService;
         private ClienteService clienteService;
 
-        public RelatorioService(VendasService vendasService,
-                                ProdutoService produtoService,
-                                ClienteService clienteService) {
-            this.vendasService = vendasService;
-            this.produtoService = produtoService;
-            this.clienteService = clienteService;
-        }
+    public RelatoriosService(VendasService vendasService, ProdutoService produtoService, ClienteService clienteService) {
+        this.vendasService = vendasService;
+        this.produtoService = produtoService;
+        this.clienteService = clienteService;
+    }
 
-        // RELATÓRIO 1: TOTAL DE VENDAS + FATURAMENTO DA LOJA
+    // RELATÓRIO 1: TOTAL DE VENDAS + FATURAMENTO DA LOJA
 
         public void relatorioVendasPorLoja(int idLoja) {
             ArrayList<Vendas> vendas = vendasService.listarVendasPorLoja(idLoja);
@@ -36,7 +33,7 @@ public class RelatoriosService {
 
         // RELATÓRIO 2: LISTAR VENDAS DE UM CLIENTE
 
-        public void relatorioVendasPorLoja(int idLoja, int idCliente) {
+        public void relatorioVendasPorCliente(int idLoja, int idCliente) {
             ArrayList<Vendas> vendas = vendasService.listarVendasPorCliente(idLoja, idCliente);
 
             System.out.println("===== RELATÓRIO DE CLIENTE =====");
@@ -64,4 +61,3 @@ public class RelatoriosService {
             }
         }
     }
-}
