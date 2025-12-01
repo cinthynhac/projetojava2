@@ -14,6 +14,7 @@ public class Main {
         LojaService lojaService = new LojaService();
         FuncionarioService funcionarioService = new FuncionarioService();
         VendasService vendasService = new VendasService();
+        RelatoriosService relatorioService = new RelatoriosService(vendasService, produtoService, clienteService);
 
 
         int menu0;
@@ -493,14 +494,137 @@ public class Main {
                                 break;
 
 
-                            case 4://cadastrar novo cliente
-                                System.out.println();
+                            case 4: //cadastrar novo cliente
+                                int opcaocliente;
+                                do {
+                                    System.out.println("\n======= OPÇÃO CLIENTES " + lojaSelecionada.getNomeFantasia() + "=======");
+                                    System.out.println("1. Cadastrar Cliente");
+                                    System.out.println("2. Listar Clientes");
+                                    System.out.println("3. Buscar Cliente por CPF");
+                                    System.out.println("4. Excluir Cliente");
+                                    System.out.println("0. Voltar");
+                                    opcaocliente = sc.nextInt();
+                                    sc.nextLine();
+
+                                    switch (opcaocliente) {
+
+                                        case 1: // cadastrar cliente
+                                            Cliente cliente = new Cliente();
+
+                                            System.out.println("Digite o nome do cliente:");
+                                            cliente.setNome(sc.nextLine());
+
+                                            cliente.setIdLoja(lojaSelecionada.getIdLoja());
+
+                                            System.out.println("Digite o CPF:");
+                                            cliente.setCpf(sc.nextLine());
+
+                                            System.out.println("Digite o telefone:");
+                                            cliente.setTelefone(sc.nextLine());
+
+                                            clienteService.cadastrarCliente(cliente);
+
+                                            System.out.println("Cliente cadastrado com sucesso!");
+                                            break;
+
+                                        case 2: // listar clientes
+                                            System.out.println("\n===== LISTA DE CLIENTES =====");
+                                            ArrayList<Cliente> clientesLoja =
+                                                    clienteService.listarClientesPorLoja(lojaSelecionada.getIdLoja());
+
+                                            if (clientesLoja.isEmpty()) {
+                                                System.out.println("Nenhum cliente cadastrado.");
+                                            } else {
+                                                for (Cliente c : clientesLoja) {
+                                                    System.out.println(
+                                                            "Nome: " + c.getNome() +
+                                                                    " | CPF: " + c.getCpf() +
+                                                                    " | Telefone: " + c.getTelefone()
+                                                    );
+                                                }
+                                            }
+                                            break;
+
+                                        case 3: // buscar cliente
+                                            System.out.println("Digite o CPF do cliente:");
+                                            String cpfBusca = sc.nextLine();
+
+                                            Cliente encontrado = clienteService.buscarClientePorCpf(
+                                                    lojaSelecionada.getIdLoja(), cpfBusca
+                                            );
+
+                                            if (encontrado == null) {
+                                                System.out.println("Cliente não encontrado!");
+                                            } else {
+                                                System.out.println("Cliente encontrado: " + encontrado.getNome());
+                                            }
+                                            break;
+
+                                        case 4: // excluir cliente
+                                            System.out.println("Digite o ID do cliente que deseja excluir:");
+                                            int idc = Integer.parseInt(sc.nextLine());
+
+                                            boolean clienteRemovido = clienteService.removerClientePorLoja(lojaSelecionada.getIdLoja(), idc);
+
+                                            if (clienteRemovido) {
+                                                System.out.println("Cliente excluído com sucesso!");
+                                            } else {
+                                                System.out.println("Nenhum cliente encontrado com esse CPF.");
+                                            }
+                                            break;
+                                        case 0:
+                                            System.out.println("Voltando...");
+                                            break;
+
+                                        default:
+                                            System.out.println("Opção inválida.");
+                                            break;
+
+                                    }
+                                } while (opcaocliente != 0);
+
+
                                 break;
 
 
                             case 5://emitir relatórios
-                                break;
 
+                                int opcRel;
+
+                                do {
+                                    System.out.println("\n===== RELATÓRIOS =====");
+                                    System.out.println("1. Vendas da loja");
+                                    System.out.println("2. Vendas de um cliente");
+                                    System.out.println("3. Produtos com estoque baixo");
+                                    System.out.println("0. Voltar");
+                                    opcRel = sc.nextInt(); sc.nextLine();
+
+                                    switch(opcRel) {
+                                        case 1:
+                                            relatorioService.relatorioVendasPorLoja(lojaSelecionada.getIdLoja());
+                                            break;
+
+                                        case 2:
+                                            System.out.println("Digite ID do cliente:");
+                                            int idC = sc.nextInt();
+                                            relatorioService.relatorioVendasPorCliente(lojaSelecionada.getIdLoja(), idC);
+                                            break;
+
+                                        case 3:
+                                            System.out.println("Mostrar produtos com estoque <= que qual quantidade?");
+                                            int limite = sc.nextInt();
+                                            relatorioService.relatorioEstoqueBaixo(lojaSelecionada.getIdLoja(), limite);
+                                            break;
+
+                                        case 0:
+                                            break;
+
+                                        default:
+                                            System.out.println("Opção inválida.");
+                                    }
+                                } while(opcRel != 0);
+
+                                break;
 
                             case 0:
 
@@ -512,8 +636,8 @@ public class Main {
                                 break;
 
                         }
-
                     } while (opcaoservico != 0);
+
                     break;
 
                 case 3:
@@ -574,7 +698,7 @@ public class Main {
 
 
             }
-
         } while (menu0 != 0);
     }
 }
+
